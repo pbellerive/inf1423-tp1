@@ -1,0 +1,65 @@
+% A.1 Programmer en MATLAB une fonction nommée lz77 permettant de compresser le signal
+% de l’exemple ci-dessus (0010102102102124010102100) en utilisant une fenêtre glissante
+% de taille N uint8 et un dictionnaire de taille n1 uint8. Notez qu’il faut utiliser le type uint8
+% pour représenter les symboles du signal à coder. Chaque élément du triplet (position,
+% longueur, suivant) sera également représenté par le type uint8.
+%
+%
+
+lz77([0 0 1 0 1 0 2 1 0 2 1 0 2 1 2 4 0 1 0 1 0 2 1 0 0], 4, 2);
+
+function result = lz77(originalData, N, n1)
+
+    result = "";
+    [l, c] = size(originalData);
+    dictionary = zeros(1, n1);
+    workingData =  horzcat(dictionary, originalData);
+    [wL, wC] = size(workingData);
+    
+    i = (n1+1);
+    while i < c    
+        windowEndPointer = i + N;       
+        if (windowEndPointer > c)
+            windowEndPointer = c;
+        end
+        
+        [matchPosition, matchLength] = getLonguestStringMatch(workingData, i, i-n1, windowEndPointer);
+
+        nextChar = "";
+        nextCharPosition = i + matchLength;
+        if (nextCharPosition <= wC)
+            nextChar = workingData(l, nextCharPosition);
+        end
+        match = "(0,0," + nextChar + ")";
+
+        if (matchPosition > 0)  % aucun match nous prenons le caractere comme le caractere du triplet
+            %Nous avons un match, nous ajoutons le caracter suivant     
+            match = "(" + matchPosition + "," + matchLength + "," + nextChar + ")";
+        end
+        i = i + matchLength + 1;
+        result = result + match;
+    end
+    disp(result);
+end
+
+function [bestMatchPosition, bestMatchLength] = getLonguestStringMatch(data, position, bufferEnd, windowEndPointer)
+    bestMatchPosition = 0;
+    bestMatchLength = 0;
+    %TRouver le meilleur match 
+    for i = position-1:-1:bufferEnd
+        newLength = 0; 
+        newMatchPosition = 0;
+        for j = 0:(windowEndPointer-position + 1)
+            dictionaryvalue = data(1,i:i+j);
+            windowValue = data(1,position:position+j);
+            if (isequal(dictionaryvalue, d))
+                if ((j+1) > bestMatchLength)
+                    bestMatchPosition = i;
+                    bestMatchLength = j + 1;
+                end
+            else
+                break;
+            end
+        end
+    end
+end

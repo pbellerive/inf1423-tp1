@@ -1,0 +1,7 @@
+clear all;
+
+N = 32;
+n1 = 16;
+
+result = lz77(, N, n1);
+disp(result);

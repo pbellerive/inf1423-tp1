@@ -1,0 +1,34 @@
+% A.1 Programmer en MATLAB une fonction nommée lz77 permettant de compresser le signal
+% de l’exemple ci-dessus (0010102102102124010102100) en utilisant une fenêtre glissante
+% de taille N uint8 et un dictionnaire de taille n1 uint8. Notez qu’il faut utiliser le type uint8
+% pour représenter les symboles du signal à coder. Chaque élément du triplet (position,
+% longueur, suivant) sera également représenté par le type uint8.
+%
+%
+
+function result = lz77(originalData, windowLength, dictionaryLength)
+
+result = "";
+originalLength = size(originalData);
+
+%tant que nous avons des caracteres
+dictStartPointer,dictEndPointer = 0;
+windowStartPointer, windowEndPointer = 0;
+
+dictionary = zero(dictionaryLength);
+workingData = cat(1, dictionary, originalData);
+
+for i=:originalLength
+    [matchPosition, matchLength] = getLonguestStringMatch(originalData, windowStartPointer);
+end
+%rechercher la sous chaine la plus longue
+
+function [bestMatchPosition, bestMatchLength] = getLonguestStringMatch(data, position)
+    bestMatchPosition = 0;
+    bestMatchLength = 0;
+end
+%encoder le triplet (position, longueur, caractere suivant)
+
+%
+end
+

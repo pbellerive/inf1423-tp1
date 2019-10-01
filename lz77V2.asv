@@ -15,26 +15,23 @@
 % @params uint8 TailleDict grandeur de la fenêtre de recherche(lookahead)
 % @return string retourne une chaine de caractère qui représente le
 % contenu original compressé 
-function code = lz77(signal, TailleFG, TailleDict)
+function code = lz77V2(signal, TailleFG, TailleDict)
     code = "";
     strCode = "";
-    
+    %128*128
     [l, c] = size(uint8(signal));
-    dictionary = zeros(1, TailleDict);
-    workingData =  horzcat(dictionary, signal);
+    dictionary = zeros(1, TailleDict);    
+    
+    workingData =  horzcat(dictionary, signal(1,1:TailleFG));
     [wL, wC] = size(workingData);
     
-    i = (TailleDict+1);
-    while i <= wC    
-        windowEndPointer = i + TailleFG;       
-        if (windowEndPointer > wC)
-            windowEndPointer = wC;
-        end
-        
-        [matchPosition, matchLength] = getLonguestStringMatch(workingData, i, i-TailleDict, windowEndPointer);
-
+    windowPointer = TailleDict + 1;
+    i = 1;
+    j = TailleFG +1
+    while (i <= l+1) % tant que je n<ai pas passe a traver toutes les lignes.         
+        [matchPosition, matchLength] = getLonguestStringMatch(workingData, windowPointer, wC);
         nextChar = "";
-        nextCharPosition = i + matchLength;
+        nextCharPosition = windowPointer + matchLength;
         if (nextCharPosition <= wC)
             nextChar = workingData(l, nextCharPosition);
         end
@@ -44,11 +41,26 @@ function code = lz77(signal, TailleFG, TailleDict)
         if (matchPosition > 0)  % aucun match nous prenons le caractere comme le caractere du triplet
             %Nous avons un match, nous ajoutons le caracter suivant     
             match = "(" + matchPosition + "," + matchLength + "," + nextChar + ")";
-        end
-        i = i + matchLength + 1;
+        end       
         strCode = strCode + match;
         code = code + char(matchPosition) + char(matchLength) + char(nextChar);
-    end    
+        
+        %fill with new stuff based on match length
+        workingData = workingData(1, matchLength + 2:end);
+        
+        for k=1:matchLength + 1
+            if (j > c)
+                i = i + 1;
+                j = 1;
+            end
+            if (i > l)
+                break;
+            end
+            workingData(end+1) = signal(i,j);
+            j = j + 1;
+        end
+        [wL, wC] = size(workingData);
+    end
     disp(strCode);
 end
 
@@ -64,12 +76,12 @@ end
 % longeur du match . Si aucune correspondance on retourne une position de 0
 % et une longeur de 0.  Nous savons que 0 n'est pas valide comme position
 % puisque Matlab début ses index à 1.
-function [bestMatchPosition, bestMatchLength] = getLonguestStringMatch(data, position, bufferEnd, windowEndPointer)
+function [bestMatchPosition, bestMatchLength] = getLonguestStringMatch(data, position, windowEndPointer)
     bestMatchPosition = uint8(0);
     bestMatchLength = uint8(0);
     %TRouver le meilleur match 
     bufferStart = position -1;
-    for i = bufferStart:-1:bufferEnd        
+    for i = bufferStart:-1:1        
         windowSize = (windowEndPointer-position);
         for j = 0:(windowSize)
             dictionaryvalue = data(1,i:i+j);

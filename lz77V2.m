@@ -29,6 +29,7 @@ function code = lz77V2(signal, TailleFG, TailleDict)
     windowPointer = TailleDict + 1;
     i = 1;
     j = TailleFG + 1;
+    
     while (i <= l+1 && wC > TailleDict) % tant que je n<ai pas passe a traver toutes les lignes.         
         [matchPosition, matchLength] = getLonguestStringMatch(workingData, windowPointer, wC);
         nextChar = "";
@@ -45,7 +46,7 @@ function code = lz77V2(signal, TailleFG, TailleDict)
         end       
         strCode = strCode + match;
         code = code + char(matchPosition) + char(matchLength) + char(nextChar);
-        
+      
         %fill with new stuff based on match length
         workingData = workingData(1, matchLength + 2:end);
         
@@ -62,7 +63,7 @@ function code = lz77V2(signal, TailleFG, TailleDict)
         end
         [wL, wC] = size(workingData);
     end
-    disp(strCode);
+%     disp(t);
 end
 
 % Fonction getLonguestStringMatch faire la recherche du plan grand match
@@ -89,8 +90,8 @@ function [bestMatchPosition, bestMatchLength] = getLonguestStringMatch(data, pos
             windowValue = data(1,position:position+j);
             if (isequal(dictionaryvalue, windowValue))
                 if ((j+1) > bestMatchLength)
-                    bestMatchPosition = i;
-                    bestMatchLength = j + 1;
+                    bestMatchPosition = uint8(i);
+                    bestMatchLength = uint8(j + 1);
                 end
             else
                 break;

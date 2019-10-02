@@ -39,26 +39,26 @@ disp(strlength(result));
 %Trouver la meilleur combinaison de parametre 
 disp("Trouver la meilleur combinaison de parametre :");
 %FG dict TC
-bestTc = [0 0 0];
-for i=1:32
-    for j=1:32
-        
-        disp("TailleFG = " + i);
-        disp("TailleDict = " + j);
-        
-        result = lz77V2(data, i, j);
-        compressLength = strlength(result);
-        disp("Longeur compressé = " + compressLength);    
-        newTc = 25 / compressLength;
-        if (newTc > bestTc(3))
-            bestTc(1) = i;
-            bestTc(2) = j;
-            bestTc(3) = newTc;
-        end
-        disp("Taux compression = " + (25/compressLength));
-    end
-end
+% bestTc = [0 0 0];
+% for i=1:32
+%     for j=1:32
+%         
+%         disp("TailleFG = " + i);
+%         disp("TailleDict = " + j);
+%         
+%         result = lz77V2(data, i, j);
+%         compressLength = strlength(result);
+%         disp("Longeur compressé = " + compressLength);    
+%         newTc = 25 / compressLength;
+%         if (newTc > bestTc(3))
+%             bestTc(1) = i;
+%             bestTc(2) = j;
+%             bestTc(3) = newTc;
+%         end
+%         disp("Taux compression = " + (25/compressLength));
+%     end
+% end
+% % 
+% % disp("Meilleur taux ");
+% % disp(bestTc);
 % 
-% disp("Meilleur taux ");
-% disp(bestTc);
-
